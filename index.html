@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Math Worksheet Generator - Integers & Rational Numbers</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4a6ee0;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            color: #4a6ee0;
+            border-bottom: 3px solid #4a6ee0;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: #4a6ee0;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #3a5bc7;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .worksheet {
+            margin-top: 30px;
+            padding: 30px;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            background-color: white;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #e1e4e8;
+        }
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #4a6ee0;
+        }
+        .question-text {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .option {
+            margin-bottom: 8px;
+        }
+        .answer-input {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        .unit-header {
+            background-color: #e8edff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 30px 0 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            border-left: 5px solid #4a6ee0;
+        }
+        .hidden {
+            display: none;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        #printBtn {
+            background-color: #27ae60;
+        }
+        #printBtn:hover {
+            background-color: #219653;
+        }
+        #checkAnswersBtn {
+            background-color: #e67e22;
+        }
+        #checkAnswersBtn:hover {
+            background-color: #d35400;
+        }
+        #viewScoresBtn {
+            background-color: #9b59b6;
+        }
+        #viewScoresBtn:hover {
+            background-color: #8e44ad;
+        }
+        #downloadBtn {
+            background-color: #3498db;
+        }
+        #downloadBtn:hover {
+            background-color: #2980b9;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .score-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f4fd;
+            border-radius: 8px;
+            border: 1px solid #b8daff;
+        }
+        .scores-container {
+            margin-top: 20px;
+        }
+        .score-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4a6ee0;
+        }
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .score-topic {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .score-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .score-details {
+            display: flex;
+            justify-content: space-between;
+        }
+        .score-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4a6ee0;
+        }
+        .no-scores {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .user-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .user-input {
+            flex: 1;
+        }
+        .error-message {
+            color: #e74c3c;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        @media print {
+            .controls, .actions, footer, .feedback, .score-display, .tabs {
+                display: none;
+            }
+            .worksheet {
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Math Worksheet Generator</h1>
+            <p class="subtitle">Integers & Rational Numbers</p>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="worksheet">Worksheet</div>
+            <div class="tab" data-tab="scores">Score History</div>
+        </div>
+        
+        <div class="tab-content active" id="worksheet-tab">
+            <div class="user-info">
+                <div class="user-input">
+                    <label for="userName">Student Name:</label>
+                    <input type="text" id="userName" placeholder="Enter your name" required>
+                    <div class="error-message hidden" id="nameError">Please enter your name to generate the worksheet.</div>
+                </div>
+                <div class="user-input">
+                    <label for="userId">Student ID (optional):</label>
+                    <input type="text" id="userId" placeholder="Enter student ID">
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="topic">Select Topic:</label>
+                    <select id="topic">
+                        <option value="all">All Topics</option>
+                        <option value="integers">Integers</option>
+                        <option value="rational">Rational Numbers</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="difficulty">Difficulty Level:</label>
+                    <select id="difficulty">
+                        <option value="all">All Levels</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="questionCount">Number of Questions:</label>
+                    <input type="number" id="questionCount" min="5" max="30" value="20">
+                </div>
+                
+                <div class="control-group">
+                    <button id="generateBtn">Generate Worksheet</button>
+                </div>
+            </div>
+            
+            <div class="worksheet hidden" id="worksheet">
+                <!-- Worksheet content will be generated here -->
+            </div>
+            
+            <div class="score-display hidden" id="scoreDisplay">
+                <!-- Score will be displayed here -->
+            </div>
+            
+            <div class="actions">
+                <button id="checkAnswersBtn" class="hidden">Check Answers</button>
+                <button id="downloadBtn" class="hidden">Download Worksheet</button>
+                <button id="printBtn" class="hidden">Print Worksheet</button>
+                <button id="viewScoresBtn">View Score History</button>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="scores-tab">
+            <h2>Score History</h2>
+            <div class="scores-container" id="scoresContainer">
+                <!-- Score history will be displayed here -->
+            </div>
+        </div>
+        
+        <footer>
+            <p>Math Worksheet Generator &copy; 2025 | Integers & Rational Numbers</p>
+        </footer>
+    </div>
+
+    <script>
+        // Backend simulation using localStorage
+        class ScoreTracker {
+            constructor() {
+                this.storageKey = 'mathWorksheetScores';
+                this.scores = this.loadScores();
+            }
+            
+            loadScores() {
+                const stored = localStorage.getItem(this.storageKey);
+                return stored ? JSON.parse(stored) : [];
+            }
+            
+            saveScores() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.scores));
+            }
+            
+            addScore(scoreData) {
+                const score = {
+                    id: Date.now().toString(),
+                    date: new Date().toISOString(),
+                    ...scoreData
+                };
+                
+                this.scores.unshift(score);
+                this.saveScores();
+                return score;
+            }
+            
+            getScores() {
+                return this.scores;
+            }
+            
+            getScoresByUser(userId) {
+                return this.scores.filter(score => score.userId === userId);
+            }
+            
+            getScoresByTopic(topic) {
+                return this.scores.filter(score => score.topic === topic);
+            }
+            
+            clearScores() {
+                this.scores = [];
+                this.saveScores();
+            }
+        }
+
+        // Question bank organized by topic
+        const questionBank = {
+            integers: [
+                {
+                    type: "multiple-choice",
+                    question: "Which point on the number line most likely represents the integer -5?",
+                    options: ["Point A, located 5 units to the right of 0", "Point B, located 5 units to the left of 0", "Point C, located at 2", "Point D, located at -2"],
+                    answer: 1,
+                    explanation: "The integer -5 is located 5 units to the left of 0 on a number line."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "The temperature is 7 degrees below zero. Which integer represents this situation?",
+                    options: ["7", "-7", "0", "-1"],
+                    answer: 1,
+                    explanation: "Below zero is represented by a negative integer, so 7 degrees below zero is -7."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "What is the opposite of the integer represented by a point 3 units to the left of zero on a number line?",
+                    options: ["-3", "0", "3", "6"],
+                    answer: 2,
+                    explanation: "3 units to the left of zero is -3. The opposite of -3 is 3."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which statement is true about a number and its opposite?",
+                    options: ["They are always both positive.", "They are always both negative.", "They are the same distance from zero on a number line.", "Their sum is always 1."],
+                    answer: 2,
+                    explanation: "A number and its opposite are equidistant from zero on a number line."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which set of integers is ordered from least to greatest?",
+                    options: ["-4, -1, 0, 2", "2, 0, -1, -4", "0, -1, 2, -4", "-1, -4, 0, 2"],
+                    answer: 0,
+                    explanation: "On a number line, numbers increase from left to right, so -4, -1, 0, 2 is correctly ordered."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "On a number line, which integer is located to the right of -8 and to the left of -4?",
+                    options: ["-10", "-6", "-2", "0"],
+                    answer: 1,
+                    explanation: "-6 is greater than -8 and less than -4, so it's positioned between them on the number line."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "What is the absolute value of -15?",
+                    options: ["-15", "0", "15", "30"],
+                    answer: 2,
+                    explanation: "Absolute value represents distance from zero, which is always non-negative. The distance from -15 to 0 is 15."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "The elevation of a valley is 125 feet below sea level. Which expression uses absolute value correctly to represent this elevation's distance from sea level?",
+                    options: ["|125|", "|-125|", "-|125|", "|0 - 125|"],
+                    answer: 1,
+                    explanation: "Distance is always positive, so we use the absolute value of -125, which is 125."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "A football team lost 12 yards on a play. How can this be represented as an integer?",
+                    options: ["+12", "0", "-12", "|12|"],
+                    answer: 2,
+                    explanation: "A loss is represented by a negative integer, so losing 12 yards is -12."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "What is the sum of an integer and its opposite?",
+                    options: ["Always 1", "Always 0", "Always positive", "Always the same as the integer"],
+                    answer: 1,
+                    explanation: "An integer and its opposite always sum to zero (e.g., 5 + (-5) = 0)."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which inequality is true?",
+                    options: ["-6 > -3", "-2 < -5", "0 > -1", "-7 > 1"],
+                    answer: 2,
+                    explanation: "On a number line, 0 is to the right of -1, so 0 is greater than -1."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which integer has the greatest absolute value?",
+                    options: ["-15", "10", "-5", "2"],
+                    answer: 0,
+                    explanation: "Absolute values: |-15| = 15, |10| = 10, |-5| = 5, |2| = 2. 15 is the greatest."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "On a vertical number line, which depth is the shallowest?",
+                    options: ["-15 feet", "-5 feet", "-25 feet", "-30 feet"],
+                    answer: 1,
+                    explanation: "On a vertical number line, higher numbers are shallower. -5 is greater than -15, -25, and -30."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which of the following has the smallest absolute value?",
+                    options: ["-18", "|7|", "-|1|", "|0|"],
+                    answer: 3,
+                    explanation: "Absolute values: |-18| = 18, |7| = 7, -|1| = -1 (but absolute value would be 1), |0| = 0. 0 is the smallest."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which number is located to the left of -2 on a horizontal number line?",
+                    options: ["-1", "-3", "0", "2"],
+                    answer: 1,
+                    explanation: "On a horizontal number line, numbers decrease from left to right, so -3 is to the left of -2."
+                }
+            ],
+            rational: [
+                {
+                    type: "multiple-choice",
+                    question: "Which of the following situations can be represented by the rational number -½?",
+                    options: ["Gaining ½ a pound.", "A score of ½ a point.", "Losing ½ a pound.", "Cutting a pizza into 2 equal slices."],
+                    answer: 2,
+                    explanation: "A loss is represented by a negative number, so losing ½ a pound is -½."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "A diver is at a depth of -4.5 meters. What does the number -4.5 represent?",
+                    options: ["A height of 4.5 meters", "A depth of 4.5 meters below the surface", "A gain of 4.5 meters", "A temperature of 4.5 degrees"],
+                    answer: 1,
+                    explanation: "Negative numbers represent values below a reference point, so -4.5 represents a depth of 4.5 meters below the surface."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "On a number line, which rational number is located exactly halfway between -4 and 6?",
+                    options: ["-1", "0", "1", "2"],
+                    answer: 2,
+                    explanation: "The midpoint between -4 and 6 is (-4 + 6)/2 = 2/2 = 1."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which point on the number line represents -1.5?",
+                    options: ["A point halfway between -2 and -1.", "A point halfway between 1 and 2.", "A point at -1.", "A point at -3."],
+                    answer: 0,
+                    explanation: "-1.5 is exactly halfway between -2 and -1 on a number line."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which list is in order from greatest to least?",
+                    options: ["-2.5, -1, 0.5, 3", "3, 0.5, -1, -2.5", "3, -2.5, 0.5, -1", "-1, 0.5, -2.5, 3"],
+                    answer: 1,
+                    explanation: "On a number line, from right to left: 3, 0.5, -1, -2.5 is the correct order from greatest to least."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "On a number line, the number -¾ is located:",
+                    options: ["To the right of 0.", "To the left of -1.", "Between -1 and 0.", "Between 0 and 1."],
+                    answer: 2,
+                    explanation: "-¾ = -0.75, which is between -1 and 0 on a number line."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "The rational number 2.25 is equivalent to:",
+                    options: ["9/4", "¼", "5/2", "25/10"],
+                    answer: 0,
+                    explanation: "2.25 = 225/100 = 9/4 when simplified."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which of the following is true about the numbers -0.8 and -0.2?",
+                    options: ["-0.8 > -0.2", "-0.8 = -0.2", "-0.8 < -0.2", "-0.8 is to the right of -0.2 on a number line."],
+                    answer: 2,
+                    explanation: "On a number line, -0.8 is to the left of -0.2, so -0.8 is less than -0.2."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "A deposit of $50.75 into a bank account can be represented as:",
+                    options: ["-50.75", "+50.75", "| -50.75 |", "0"],
+                    answer: 1,
+                    explanation: "A deposit represents an increase, so it's represented by a positive number: +50.75."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which number is located to the left of -2.1 on a horizontal number line?",
+                    options: ["-2.0", "-2.2", "-1.9", "0"],
+                    answer: 1,
+                    explanation: "On a horizontal number line, numbers decrease from left to right, so -2.2 is to the left of -2.1."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which rational number lies between 7.5 and 7.6?",
+                    options: ["7.61", "7.58", "7.7", "7.65"],
+                    answer: 1,
+                    explanation: "7.58 is between 7.5 and 7.6 (7.5 < 7.58 < 7.6)."
+                },
+                {
+                    type: "ordering",
+                    question: "Order the following numbers from least to greatest: 0, -1/2, |-1|, 1/4, 2²",
+                    answer: "-1/2, 0, 1/4, |-1|, 2²",
+                    explanation: "-1/2 = -0.5, 0 = 0, 1/4 = 0.25, |-1| = 1, 2² = 4. So the order is -0.5, 0, 0.25, 1, 4."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "The additive inverse of -3 is:",
+                    options: ["-3", "3", "1/3", "-1/3"],
+                    answer: 1,
+                    explanation: "The additive inverse is the number that when added to -3 gives 0, which is 3."
+                },
+                {
+                    type: "short-answer",
+                    question: "Convert -2.5 to a fraction in simplest form.",
+                    answer: "-5/2",
+                    explanation: "-2.5 = -25/10 = -5/2 when simplified."
+                },
+                {
+                    type: "multiple-choice",
+                    question: "Which of the following represents one of the solutions of the inequality: x ≥ -5?",
+                    options: ["-6", "-11", "-5", "-12"],
+                    answer: 2,
+                    explanation: "x ≥ -5 means x is greater than or equal to -5. -5 satisfies this condition."
+                }
+            ]
+        };
+
+        // DOM elements
+        const generateBtn = document.getElementById('generateBtn');
+        const printBtn = document.getElementById('printBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const checkAnswersBtn = document.getElementById('checkAnswersBtn');
+        const viewScoresBtn = document.getElementById('viewScoresBtn');
+        const worksheet = document.getElementById('worksheet');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const scoresContainer = document.getElementById('scoresContainer');
+        const topicSelect = document.getElementById('topic');
+        const difficultySelect = document.getElementById('difficulty');
+        const questionCountInput = document.getElementById('questionCount');
+        const userNameInput = document.getElementById('userName');
+        const userIdInput = document.getElementById('userId');
+        const nameError = document.getElementById('nameError');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Initialize score tracker
+        const scoreTracker = new ScoreTracker();
+
+        // Store current questions for answer checking
+        let currentQuestions = [];
+        let currentTopic = 'all';
+
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show active tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${tabId}-tab`) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // If switching to scores tab, refresh the scores display
+                if (tabId === 'scores') {
+                    displayScores();
+                }
+            });
+        });
+
+        // Generate worksheet function
+        function generateWorksheet() {
+            const userName = userNameInput.value.trim();
+            
+            // Validate student name
+            if (!userName) {
+                nameError.classList.remove('hidden');
+                return;
+            }
+            
+            nameError.classList.add('hidden');
+            
+            const selectedTopic = topicSelect.value;
+            const questionCount = parseInt(questionCountInput.value);
+            currentTopic = selectedTopic;
+            
+            // Clear previous worksheet
+            worksheet.innerHTML = '';
+            scoreDisplay.innerHTML = '';
+            scoreDisplay.classList.add('hidden');
+            
+            // Select questions based on topic
+            let questions = [];
+            if (selectedTopic === 'all') {
+                // Combine questions from all topics
+                for (const topic in questionBank) {
+                    questions = questions.concat(questionBank[topic]);
+                }
+            } else {
+                questions = questionBank[selectedTopic];
+            }
+            
+            // Shuffle questions and select the requested number
+            const shuffledQuestions = shuffleArray([...questions]);
+            currentQuestions = shuffledQuestions.slice(0, Math.min(questionCount, shuffledQuestions.length));
+            
+            // Add unit headers if showing all topics
+            if (selectedTopic === 'all') {
+                addUnitHeaders(currentQuestions);
+            } else {
+                // Just add the questions
+                currentQuestions.forEach((q, index) => {
+                    addQuestionToWorksheet(q, index + 1);
+                });
+            }
+            
+            // Show worksheet and action buttons
+            worksheet.classList.remove('hidden');
+            printBtn.classList.remove('hidden');
+            downloadBtn.classList.remove('hidden');
+            checkAnswersBtn.classList.remove('hidden');
+        }
+
+        // Add unit headers for better organization when showing all topics
+        function addUnitHeaders(questions) {
+            let currentUnit = '';
+            let questionNumber = 1;
+            
+            questions.forEach(q => {
+                // Determine which unit this question belongs to
+                let unit = '';
+                if (questionBank.integers.includes(q)) unit = 'Unit 1: Integers';
+                else if (questionBank.rational.includes(q)) unit = 'Unit 2: Rational Numbers';
+                
+                // Add unit header if it's different from the current one
+                if (unit && unit !== currentUnit) {
+                    const unitHeader = document.createElement('div');
+                    unitHeader.className = 'unit-header';
+                    unitHeader.textContent = unit;
+                    worksheet.appendChild(unitHeader);
+                    currentUnit = unit;
+                }
+                
+                // Add the question
+                addQuestionToWorksheet(q, questionNumber);
+                questionNumber++;
+            });
+        }
+
+        // Add a question to the worksheet
+        function addQuestionToWorksheet(question, number) {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.id = `question-${number}`;
+            
+            const questionNumber = document.createElement('div');
+            questionNumber.className = 'question-number';
+            questionNumber.textContent = `${number}.`;
+            questionDiv.appendChild(questionNumber);
+            
+            const questionText = document.createElement('div');
+            questionText.className = 'question-text';
+            questionText.textContent = question.question;
+            questionDiv.appendChild(questionText);
+            
+            if (question.type === 'multiple-choice') {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                question.options.forEach((option, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${number}`;
+                    input.value = index;
+                    input.id = `question-${number}-option-${index}`;
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `question-${number}-option-${index}`;
+                    label.textContent = ` ${String.fromCharCode(65 + index)}. ${option}`;
+                    
+                    optionDiv.appendChild(input);
+                    optionDiv.appendChild(label);
+                    optionsDiv.appendChild(optionDiv);
+                });
+                
+                questionDiv.appendChild(optionsDiv);
+            } else if (question.type === 'short-answer') {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'answer-input';
+                input.placeholder = 'Your answer here...';
+                input.id = `answer-${number}`;
+                questionDiv.appendChild(input);
+            } else if (question.type === 'ordering') {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'answer-input';
+                input.placeholder = 'List in order separated by commas...';
+                input.style.width = '400px';
+                input.id = `answer-${number}`;
+                questionDiv.appendChild(input);
+            }
+            
+            // Add feedback area
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback hidden';
+            feedback.id = `feedback-${number}`;
+            questionDiv.appendChild(feedback);
+            
+            worksheet.appendChild(questionDiv);
+        }
+
+        // Check answers function
+        function checkAnswers() {
+            let correctCount = 0;
+            
+            currentQuestions.forEach((question, index) => {
+                const questionNumber = index + 1;
+                const feedback = document.getElementById(`feedback-${questionNumber}`);
+                feedback.classList.remove('correct', 'incorrect', 'hidden');
+                
+                let userAnswer;
+                let isCorrect = false;
+                
+                if (question.type === 'multiple-choice') {
+                    const selectedOption = document.querySelector(`input[name="question-${questionNumber}"]:checked`);
+                    if (selectedOption) {
+                        userAnswer = parseInt(selectedOption.value);
+                        isCorrect = userAnswer === question.answer;
+                    }
+                } else {
+                    userAnswer = document.getElementById(`answer-${questionNumber}`).value.trim();
+                    
+                    // Normalize answer for comparison
+                    const normalizedUserAnswer = userAnswer.toLowerCase().replace(/\s+/g, '');
+                    const normalizedCorrectAnswer = question.answer.toString().toLowerCase().replace(/\s+/g, '');
+                    
+                    isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+                }
+                
+                if (isCorrect) {
+                    feedback.textContent = `✓ Correct! ${question.explanation || ''}`;
+                    feedback.classList.add('correct');
+                    correctCount++;
+                } else {
+                    let correctAnswerText;
+                    if (question.type === 'multiple-choice') {
+                        correctAnswerText = question.options[question.answer];
+                    } else {
+                        correctAnswerText = question.answer;
+                    }
+                    
+                    feedback.textContent = `✗ Incorrect. The correct answer is: ${correctAnswerText}. ${question.explanation || ''}`;
+                    feedback.classList.add('incorrect');
+                }
+            });
+            
+            // Calculate score
+            const scorePercentage = Math.round((correctCount / currentQuestions.length) * 100);
+            
+            // Save score to backend
+            const userName = userNameInput.value || 'Anonymous';
+            const userId = userIdInput.value || 'unknown';
+            
+            const scoreData = {
+                userName: userName,
+                userId: userId,
+                topic: currentTopic,
+                score: scorePercentage,
+                correctAnswers: correctCount,
+                totalQuestions: currentQuestions.length,
+                date: new Date().toLocaleString()
+            };
+            
+            scoreTracker.addScore(scoreData);
+            
+            // Display score
+            scoreDisplay.innerHTML = `
+                <h3>Your Score: ${correctCount}/${currentQuestions.length} (${scorePercentage}%)</h3>
+                <p>${getScoreMessage(scorePercentage)}</p>
+                <p>Score saved to your history.</p>
+            `;
+            scoreDisplay.classList.remove('hidden');
+        }
+
+        // Download worksheet as text file
+        function downloadWorksheet() {
+            const userName = userNameInput.value.trim() || 'Student';
+            const topic = topicSelect.options[topicSelect.selectedIndex].text;
+            const date = new Date().toLocaleDateString();
+            
+            let content = `Math Worksheet - Integers & Rational Numbers\n`;
+            content += `Student: ${userName}\n`;
+            content += `Topic: ${topic}\n`;
+            content += `Date: ${date}\n\n`;
+            
+            currentQuestions.forEach((question, index) => {
+                content += `${index + 1}. ${question.question}\n`;
+                
+                if (question.type === 'multiple-choice') {
+                    question.options.forEach((option, optIndex) => {
+                        content += `   ${String.fromCharCode(65 + optIndex)}. ${option}\n`;
+                    });
+                }
+                
+                content += '\n';
+            });
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Math_Worksheet_${userName.replace(/\s+/g, '_')}_${date.replace(/\//g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Display scores in the scores tab
+        function displayScores() {
+            const scores = scoreTracker.getScores();
+            scoresContainer.innerHTML = '';
+            
+            if (scores.length === 0) {
+                scoresContainer.innerHTML = '<div class="no-scores">No scores recorded yet. Complete a worksheet to see your scores here.</div>';
+                return;
+            }
+            
+            scores.forEach(score => {
+                const scoreCard = document.createElement('div');
+                scoreCard.className = 'score-card';
+                
+                scoreCard.innerHTML = `
+                    <div class="score-header">
+                        <div class="score-topic">${score.userName} - ${score.topic === 'all' ? 'All Topics' : score.topic}</div>
+                        <div class="score-date">${score.date}</div>
+                    </div>
+                    <div class="score-details">
+                        <div class="score-value">${score.score}%</div>
+                        <div>${score.correctAnswers}/${score.totalQuestions} correct</div>
+                    </div>
+                `;
+                
+                scoresContainer.appendChild(scoreCard);
+            });
+        }
+
+        // Get motivational message based on score
+        function getScoreMessage(percentage) {
+            if (percentage >= 90) return "Excellent work! You've mastered these concepts!";
+            if (percentage >= 80) return "Great job! You have a strong understanding of these topics.";
+            if (percentage >= 70) return "Good work! You understand most of these concepts.";
+            if (percentage >= 60) return "Not bad! Review the incorrect answers to improve.";
+            return "Keep practicing! Review the material and try again.";
+        }
+
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Event listeners
+        generateBtn.addEventListener('click', generateWorksheet);
+        
+        printBtn.addEventListener('click', () => {
+            window.print();
+        });
+        
+        downloadBtn.addEventListener('click', downloadWorksheet);
+        
+        checkAnswersBtn.addEventListener('click', checkAnswers);
+        
+        viewScoresBtn.addEventListener('click', () => {
+            // Switch to scores tab
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('.tab[data-tab="scores"]').classList.add('active');
+            
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === 'scores-tab') {
+                    content.classList.add('active');
+                }
+            });
+            
+            displayScores();
+        });
+
+        // Initialize scores display
+        displayScores();
+    </script>
+</body>
+</html>
